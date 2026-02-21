@@ -1,0 +1,187 @@
+/* ============================================
+   APP LAYOUT
+   ============================================ */
+.app-layout {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+}
+
+/* ============================================
+   HEADER - Instagram-style
+   ============================================ */
+.app-header {
+    background: white;
+    padding: 10px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #dbdbdb;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 975px;
+    margin: 0 auto;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-emoji {
+    font-size: 1.8rem;
+}
+
+.logo-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.5px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.header-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: #262626;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.header-btn:hover {
+    background: #f3f4f6;
+}
+
+/* ============================================
+   MAIN CONTENT
+   ============================================ */
+.app-main {
+    flex: 1;
+    padding-bottom: 72px;
+    width: 100%;
+}
+
+/* ============================================
+   BOTTOM NAVIGATION - Clean & Modern
+   ============================================ */
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 6px 0;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    background: white;
+    border-top: 1px solid #dbdbdb;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 14px;
+    color: #8e8e8e;
+    text-decoration: none;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-item svg {
+    stroke-width: 1.5;
+    transition: all 0.2s;
+}
+
+.nav-item.active {
+    color: #262626;
+}
+
+.nav-item.active svg {
+    stroke-width: 2.2;
+}
+
+/* Active indicator dot */
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #059669;
+}
+
+/* Plant FAB button */
+.nav-plant {
+    padding: 0 !important;
+}
+
+.nav-plant .plant-fab {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -12px;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+    transition: all 0.2s;
+}
+
+.nav-plant .plant-fab svg {
+    stroke-width: 2.5 !important;
+    color: white;
+}
+
+.nav-plant:hover .plant-fab,
+.nav-plant:active .plant-fab {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.5);
+}
+
+.nav-plant.active::after {
+    display: none;
+}
+
+/* Responsive - always show nav */
+@media (min-width: 768px) {
+    .app-main {
+        max-width: 975px;
+        margin: 0 auto;
+    }
+}
