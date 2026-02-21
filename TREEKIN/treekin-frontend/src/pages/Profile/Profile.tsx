@@ -13,8 +13,8 @@ import {
     TREDITS_PER_TREE,
     TREDITS_PER_10KG_CO2,
     CO2_KG_PER_UNIT,
-    TREDITS_PER_100L_WATER,
-    WATER_LITERS_PER_UNIT,
+    TREDITS_PER_10KG_WATER,
+    WATER_KG_PER_UNIT,
     type TreditsBreakdown
 } from '../../lib/tredits';
 import './Profile.css';
@@ -254,17 +254,20 @@ export const ProfilePage: React.FC = () => {
 
     // Derived state
     const treesCount = myTrees.length || user?.trees_planted || 0;
-    const co2Saved = user?.total_carbon_saved || 0;
-    const waterFiltered = (user as any)?.water_filtered || 12400; // liters - from API or default
     const joinedDate = (user as any)?.created_at ? new Date((user as any).created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '2023';
     const displayName = user?.display_name || user?.username || 'Eco Warrior';
 
+    // Collect all tree planted dates for CO2/Water/O2 calculation
+    const treeDates = useMemo(() => myTrees.map(t => t.created_at), [myTrees]);
+
     // ============================================
     // TREDITS CALCULATION
+    // Uses tree planted dates to calculate CO2 absorbed, water filtered, O2 released
+    // Each tree: 1kg CO2/Water/O2 per 7 days of age
     // ============================================
     const treditsBreakdown: TreditsBreakdown = useMemo(
-        () => calculateTredits(treesCount, co2Saved || 248, waterFiltered),
-        [treesCount, co2Saved, waterFiltered]
+        () => calculateTredits(treesCount, treeDates),
+        [treesCount, treeDates]
     );
 
     // Animated counter for total tredits
@@ -388,6 +391,9 @@ export const ProfilePage: React.FC = () => {
                                 <span className="tredits-legend-item">
                                     <span className="tredits-dot water" />Water
                                 </span>
+                                <span className="tredits-legend-item">
+                                    <span className="tredits-dot o2" />O2
+                                </span>
                             </div>
                         </div>
 
@@ -409,7 +415,7 @@ export const ProfilePage: React.FC = () => {
                                 </div>
                                 <div className="tredits-source-info">
                                     <span className="tredits-source-label">CO2 Absorbed</span>
-                                    <span className="tredits-source-detail">{Math.floor(treditsBreakdown.co2AbsorbedKg / CO2_KG_PER_UNIT)} x {CO2_KG_PER_UNIT}kg = {TREDITS_PER_10KG_CO2} tredits each</span>
+                                    <span className="tredits-source-detail">{treditsBreakdown.co2AbsorbedKg}kg total (1kg/tree/7days) &middot; {Math.floor(treditsBreakdown.co2AbsorbedKg / CO2_KG_PER_UNIT)} x {CO2_KG_PER_UNIT}kg = {TREDITS_PER_10KG_CO2} tredits each</span>
                                 </div>
                                 <span className="tredits-source-value co2">+{formatTredits(treditsBreakdown.fromCO2)}</span>
                             </div>
@@ -419,9 +425,19 @@ export const ProfilePage: React.FC = () => {
                                 </div>
                                 <div className="tredits-source-info">
                                     <span className="tredits-source-label">Water Filtered</span>
-                                    <span className="tredits-source-detail">{Math.floor(treditsBreakdown.waterFilteredLiters / WATER_LITERS_PER_UNIT)} x {WATER_LITERS_PER_UNIT}L = {TREDITS_PER_100L_WATER} tredits each</span>
+                                    <span className="tredits-source-detail">{treditsBreakdown.waterFilteredKg}kg total (1kg/tree/7days) &middot; {Math.floor(treditsBreakdown.waterFilteredKg / WATER_KG_PER_UNIT)} x {WATER_KG_PER_UNIT}kg = {TREDITS_PER_10KG_WATER} tredits each</span>
                                 </div>
                                 <span className="tredits-source-value water">+{formatTredits(treditsBreakdown.fromWater)}</span>
+                            </div>
+                            <div className="tredits-source-card">
+                                <div className="tredits-source-icon o2">
+                                    <Leaf size={18} />
+                                </div>
+                                <div className="tredits-source-info">
+                                    <span className="tredits-source-label">O2 Released</span>
+                                    <span className="tredits-source-detail">{treditsBreakdown.o2ReleasedKg}kg total (1kg/tree/7days) &middot; Tracked impact</span>
+                                </div>
+                                <span className="tredits-source-value o2">{treditsBreakdown.o2ReleasedKg}kg</span>
                             </div>
                         </div>
 
@@ -447,25 +463,25 @@ export const ProfilePage: React.FC = () => {
                                 <div className="impact-card-icon amber">
                                     <Zap size={20} />
                                 </div>
-                                <div className="impact-card-value amber">{co2Saved > 0 ? `${co2Saved.toFixed(0)}kg` : '0.7kg'}</div>
+                                <div className="impact-card-value amber">{treditsBreakdown.co2AbsorbedKg}kg</div>
                                 <div className="impact-card-label">CO2 Absorbed</div>
-                                <div className="impact-card-sub">+124kg this year</div>
+                                <div className="impact-card-sub">1kg per tree every 7 days</div>
                             </div>
                             <div className="impact-card">
                                 <div className="impact-card-icon blue">
                                     <Droplets size={20} />
                                 </div>
-                                <div className="impact-card-value blue">{waterFiltered >= 1000 ? `${(waterFiltered / 1000).toFixed(1)}k` : waterFiltered}</div>
+                                <div className="impact-card-value blue">{treditsBreakdown.waterFilteredKg}kg</div>
                                 <div className="impact-card-label">Water Filtered</div>
-                                <div className="impact-card-sub">Liters annually</div>
+                                <div className="impact-card-sub">1kg per tree every 7 days</div>
                             </div>
                             <div className="impact-card">
                                 <div className="impact-card-icon purple">
-                                    <Bug size={20} />
+                                    <Leaf size={20} />
                                 </div>
-                                <div className="impact-card-value purple">6</div>
-                                <div className="impact-card-label">Oxygen Released</div>
-                                <div className="impact-card-sub">120kg this year</div>
+                                <div className="impact-card-value purple">{treditsBreakdown.o2ReleasedKg}kg</div>
+                                <div className="impact-card-label">O2 Released</div>
+                                <div className="impact-card-sub">1kg per tree every 7 days</div>
                             </div>
                         </div>
                     </div>

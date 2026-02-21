@@ -431,6 +431,10 @@
     background: #2563eb;
 }
 
+.tredits-dot.o2 {
+    background: #10b981;
+}
+
 /* Breakdown cards */
 .tredits-breakdown {
     display: flex;
@@ -476,6 +480,11 @@
     color: #2563eb;
 }
 
+.tredits-source-icon.o2 {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
 .tredits-source-info {
     flex: 1;
     min-width: 0;
@@ -512,6 +521,10 @@
 
 .tredits-source-value.water {
     color: #2563eb;
+}
+
+.tredits-source-value.o2 {
+    color: #10b981;
 }
 
 .tredits-card-footer {
